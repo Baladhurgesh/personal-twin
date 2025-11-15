@@ -23,6 +23,10 @@ This project consists of two main parts:
 - Resume parsing and skill extraction
 - GitHub repository analysis with README collection
 - **AI-Powered Project Summaries** using OpenRouter GPT-4o
+- **ElevenLabs Knowledge Base Integration** - Automatically uploads:
+  - All project summaries (text files)
+  - Resume PDFs
+  - Configurable agent updates
 - Contribution history tracking
 - Programming language detection
 - Project insights and recommendations
@@ -33,7 +37,8 @@ This project consists of two main parts:
 - **Python 3.8+** with pip
 - **Node.js 18+** with npm
 - GitHub Personal Access Token (optional, for higher rate limits)
-- OpenAI API Key (for GPT-5 analysis)
+- OpenRouter API Key (for GPT-4o analysis)
+- ElevenLabs API Key (for knowledge base integration)
 
 ## 🛠️ Installation
 
@@ -44,10 +49,11 @@ This project consists of two main parts:
 pip install -r requirements.txt
 
 # Configure environment variables
-cp env.example .env
-# Edit .env and add your API keys:
-# - GITHUB_TOKEN
-# - OPENROUTER_API_KEY
+# Create a .env file in the project root with:
+# - GITHUB_TOKEN (get from: https://github.com/settings/tokens)
+# - OPENROUTER_API_KEY (get from: https://openrouter.ai/keys)
+# - ELEVENLABS_API_KEY (get from: https://elevenlabs.io/app/settings/api-keys)
+# - ELEVENLABS_AGENT_ID (optional, from ElevenLabs dashboard)
 ```
 
 ### 2. Frontend Setup
@@ -150,10 +156,16 @@ GITHUB_TOKEN=your_github_personal_access_token
 # OpenRouter API (for AI analysis - GPT-4o)
 OPENROUTER_API_KEY=your_openrouter_api_key
 
-# Legacy OpenAI (if using direct OpenAI API)
-OPENAI_API_KEY=your_openai_api_key
-OPENAI_MODEL=gpt-5
+# ElevenLabs Knowledge Base Integration
+ELEVENLABS_API_KEY=your_elevenlabs_api_key
+ELEVENLABS_AGENT_ID=your_agent_id_here  # Optional: for agent updates
 ```
+
+#### Getting API Keys:
+- **GitHub Token**: https://github.com/settings/tokens (select `repo` scope)
+- **OpenRouter Key**: https://openrouter.ai/keys
+- **ElevenLabs Key**: https://elevenlabs.io/app/settings/api-keys
+- **ElevenLabs Agent ID**: Find in your ElevenLabs agent dashboard (optional)
 
 ### Frontend (.env)
 ```env
@@ -165,8 +177,22 @@ VITE_API_URL=http://localhost:8000/api
 1. User uploads resume → Frontend validates and prepares file
 2. User enters GitHub username → Frontend sends to backend
 3. Backend scrapes GitHub data → Saves to JSON
-4. Backend analyzes with GPT-5 → Generates insights
-5. Frontend displays results → User can export
+4. Backend analyzes with GPT-4o → Generates insights
+5. **Backend uploads to ElevenLabs** → Adds to knowledge base
+6. Frontend displays results → User can export
+
+### ElevenLabs Integration Flow
+
+When GitHub analysis completes:
+1. All project summary `.txt` files are uploaded to ElevenLabs knowledge base
+2. Each file is tagged as "GitHub Project: [project-name]"
+3. If `ELEVENLABS_AGENT_ID` is configured, the agent is automatically updated
+
+When resume is uploaded:
+1. Resume PDF/DOCX is saved locally
+2. File is uploaded to ElevenLabs knowledge base
+3. Tagged as "Resume: [username]"
+4. If `ELEVENLABS_AGENT_ID` is configured, the agent is automatically updated
 
 ## 🎨 UI Screenshots
 

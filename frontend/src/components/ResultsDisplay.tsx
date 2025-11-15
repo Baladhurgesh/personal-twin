@@ -1,5 +1,6 @@
 import { Sparkles, Download, RefreshCw, CheckCircle } from 'lucide-react'
 import { DigitalTwinData } from '../App'
+import ConversationalWidget from './ConversationalWidget'
 import './ResultsDisplay.css'
 
 interface ResultsDisplayProps {
@@ -115,6 +116,9 @@ function ResultsDisplay({ twinData, onReset }: ResultsDisplayProps) {
           state-of-the-art AI models to ensure accuracy and privacy.
         </p>
       </div>
+
+      {/* Conversational AI Widget */}
+      <ConversationalWidget username={twinData.githubUsername} />
     </div>
   )
 }

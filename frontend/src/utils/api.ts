@@ -79,10 +79,13 @@ export interface DigitalTwinResponse {
 /**
  * Upload and analyze resume
  */
-export const uploadResume = async (file: File): Promise<ResumeAnalysisResponse> => {
+export const uploadResume = async (file: File, username?: string): Promise<ResumeAnalysisResponse> => {
   console.log('Uploading resume for analysis...');
   const formData = new FormData();
   formData.append('resume', file);
+  if (username) {
+    formData.append('username', username);
+  }
 
   try {
     const response = await apiClient.post<ResumeAnalysisResponse>('/resume/analyze', formData, {
@@ -92,6 +95,8 @@ export const uploadResume = async (file: File): Promise<ResumeAnalysisResponse> 
     });
     
     console.log('Resume analysis complete:', response.data);
+    console.log('✓ Resume uploaded to backend');
+    console.log('✓ Resume uploaded to ElevenLabs Knowledge Base');
     return response.data;
   } catch (error) {
     console.error('Error analyzing resume:', error);
@@ -192,6 +197,31 @@ export const exportDigitalTwin = (data: any): void => {
   URL.revokeObjectURL(url);
 
   console.log('Digital twin data exported successfully');
+};
+
+export interface ElevenLabsConfigResponse {
+  success: boolean;
+  data: {
+    agentId: string;
+    configured: boolean;
+  };
+  message?: string;
+}
+
+/**
+ * Get ElevenLabs agent configuration
+ */
+export const getElevenLabsConfig = async (): Promise<ElevenLabsConfigResponse> => {
+  console.log('Fetching ElevenLabs configuration...');
+  
+  try {
+    const response = await apiClient.get<ElevenLabsConfigResponse>('/elevenlabs/config');
+    console.log('ElevenLabs config retrieved:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching ElevenLabs config:', error);
+    throw error;
+  }
 };
 
 export default apiClient;

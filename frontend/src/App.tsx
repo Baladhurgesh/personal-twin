@@ -4,7 +4,7 @@ import ResumeUpload from './components/ResumeUpload'
 import GitHubConnect from './components/GitHubConnect'
 import ProgressTracker from './components/ProgressTracker'
 import ResultsDisplay from './components/ResultsDisplay'
-import { analyzeGitHub } from './utils/api'
+import { analyzeGitHub, uploadResume } from './utils/api'
 import { User, Sparkles } from 'lucide-react'
 
 export interface DigitalTwinData {
@@ -20,26 +20,42 @@ function App() {
   const [twinData, setTwinData] = useState<DigitalTwinData>({})
   const [isProcessing, setIsProcessing] = useState(false)
 
-  const handleResumeUpload = (file: File) => {
+  const handleResumeUpload = async (file: File) => {
     console.log('Resume uploaded:', file.name)
     setTwinData(prev => ({ ...prev, resume: file }))
+    
+    // Note: We'll upload to backend when we have the GitHub username
+    // This ensures both are associated with the same user
     setStep(2)
   }
 
   const handleGitHubConnect = async (username: string) => {
     console.log('GitHub username provided:', username)
     console.log('═══════════════════════════════════════════════════════════')
-    console.log('STARTING GITHUB ANALYSIS')
+    console.log('STARTING ANALYSIS')
     console.log('═══════════════════════════════════════════════════════════')
     setIsProcessing(true)
     setTwinData(prev => ({ ...prev, githubUsername: username }))
     
     try {
-      console.log('Calling backend API to analyze GitHub profile...')
+      // First, upload resume if available
+      if (twinData.resume) {
+        console.log('Step 1: Uploading resume to backend and ElevenLabs KB...')
+        try {
+          const resumeResult = await uploadResume(twinData.resume, username)
+          console.log('✓ Resume uploaded successfully')
+          setTwinData(prev => ({ ...prev, resumeAnalysis: resumeResult.data }))
+        } catch (error) {
+          console.error('⚠ Resume upload failed (continuing with GitHub analysis):', error)
+        }
+      }
+      
+      console.log('Step 2: Analyzing GitHub profile...')
       console.log('The enhanced scraper will:')
       console.log('  ✓ Scrape all public repositories')
       console.log('  ✓ Download README files')
       console.log('  ✓ Generate AI summaries using GPT-4o')
+      console.log('  ✓ Upload to ElevenLabs Knowledge Base')
       console.log('  ✓ Save individual text files')
       console.log('  ✓ Create consolidated JSON data')
       console.log('')
@@ -51,11 +67,12 @@ function App() {
       
       if (result.success) {
         console.log('═══════════════════════════════════════════════════════════')
-        console.log('GITHUB ANALYSIS COMPLETE')
+        console.log('ANALYSIS COMPLETE')
         console.log('═══════════════════════════════════════════════════════════')
         console.log('✓ All repositories scraped')
         console.log('✓ README files collected')
         console.log('✓ AI summaries generated')
+        console.log('✓ Uploaded to ElevenLabs Knowledge Base')
         console.log('✓ Text files saved to project_summaries/' + username)
         console.log('✓ JSON data created')
         
@@ -63,6 +80,7 @@ function App() {
           console.log('\n📊 Statistics:')
           console.log(`   Total repositories: ${result.data.repositories || 'N/A'}`)
           console.log(`   Summary files created: ${result.data.topProjects?.length || 'N/A'}`)
+          console.log(`   Uploaded to KB: ${result.data.kb_uploaded || 'N/A'}`)
           console.log(`   Output directory: project_summaries/${username}`)
         }
         
