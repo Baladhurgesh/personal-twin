@@ -1,0 +1,176 @@
+.progress-tracker {
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: var(--surface);
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.progress-steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.step-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  flex: 1;
+}
+
+.step-indicator {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--surface-light);
+  border: 3px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.step.active .step-indicator {
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
+
+.step.completed .step-indicator {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.step-number {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.step.active .step-number {
+  color: white;
+}
+
+.check-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: white;
+}
+
+.step-info {
+  width: 100%;
+}
+
+.step-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.step.active .step-title,
+.step.completed .step-title {
+  color: var(--text-primary);
+}
+
+.step-description {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Connector Line */
+.step-connector {
+  height: 3px;
+  flex: 1;
+  background: var(--border);
+  margin: 0 1rem;
+  margin-bottom: 3rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.step-connector::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background: var(--success);
+  transition: width 0.5s ease;
+}
+
+.step-connector.completed::after {
+  width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .progress-tracker {
+    padding: 1.5rem 1rem;
+  }
+
+  .progress-steps {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .step-wrapper {
+    flex-direction: column;
+  }
+
+  .step {
+    flex-direction: row;
+    text-align: left;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-indicator {
+    margin-bottom: 0;
+    margin-right: 1rem;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .step-info {
+    flex: 1;
+  }
+
+  .step-connector {
+    width: 3px;
+    height: 2rem;
+    margin: 0;
+    margin-left: 1.375rem;
+    margin-top: -1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .step-connector::after {
+    width: 100%;
+    height: 0;
+  }
+
+  .step-connector.completed::after {
+    height: 100%;
+  }
+
+  .step-wrapper:last-child .step {
+    margin-bottom: 0;
+  }
+}
+
